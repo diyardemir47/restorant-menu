@@ -7,15 +7,40 @@ import FoodOverviewScreen from './screens/FoodOverviewScreen';
 import FoodDetailScreen from './screens/FoodDetailScreen';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import FavoritesScreen from './screens/FavoritesScreen';
+import { Ionicons } from '@expo/vector-icons';
+import FavoritesContextProvider from './store/favoritescontext';
+import { Provider } from 'react-redux';
+import { store } from './store/redux/store';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigator() {
   return (
-    <Drawer.Navigator>
-      <Drawer.Screen name="Categories" component={CategoriesScreen} />
-      <Drawer.Screen name="Favorites" component={FavoritesScreen} />
+    <Drawer.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: 'blue' },
+        headerTintColor: 'white',
+      }}
+    >
+      <Drawer.Screen
+        name="Categories"
+        component={CategoriesScreen}
+        options={{
+          title: 'Tüm Kategoriler',
+          drawerIcon: () => <Ionicons name="list" size={24} color="black" />,
+        }}
+      />
+      <Drawer.Screen
+        name="Favorites"
+        component={FavoritesScreen}
+        options={{
+          title: 'Favoriler',
+          drawerIcon: () => (
+            <Ionicons name="ios-star-half" size={24} color="black" />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 }
@@ -23,29 +48,33 @@ function DrawerNavigator() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: { backgroundColor: 'blue' },
-          headerTintColor: 'white',
-          contentStyle: { backgroundColor: 'lightblue' },
-        }}
-      >
-        <Stack.Screen
-          name="Drawer"
-          component={DrawerNavigator}
-          options={{
-            headerShown: false,
+      {/* <FavoritesContextProvider> */}
+      <Provider store={store}>
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: { backgroundColor: 'blue' },
+            headerTintColor: 'white',
+            contentStyle: { backgroundColor: 'lightblue' },
           }}
-        />
-        <Stack.Screen name="FoodOverview" component={FoodOverviewScreen} />
-        <Stack.Screen
-          name="FoodDetail"
-          component={FoodDetailScreen}
-          options={{
-            title: 'İçerik',
-          }}
-        />
-      </Stack.Navigator>
+        >
+          <Stack.Screen
+            name="Drawer"
+            component={DrawerNavigator}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen name="FoodOverview" component={FoodOverviewScreen} />
+          <Stack.Screen
+            name="FoodDetail"
+            component={FoodDetailScreen}
+            options={{
+              title: 'İçerik',
+            }}
+          />
+        </Stack.Navigator>
+      </Provider>
+      {/* </FavoritesContextProvider> */}
     </NavigationContainer>
   );
 }

@@ -7,20 +7,31 @@ import {
   Pressable,
 } from 'react-native';
 import React from 'react';
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useContext } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 import { FOODS } from '../data/dummy-data';
 import FoodIngredients from '../components/FoodIngredients';
+import { FavoritesContext } from '../store/favoritescontext';
 
 export default function FoodDetailScreen({ route, navigation }) {
+  const favoriteFoodContext = useContext(FavoritesContext);
   const foodId = route.params.foodId;
   const selectedFood = FOODS.find((food) => food.id === foodId);
-  console.log(selectedFood);
+
+  const foodIsFavorite = favoriteFoodContext.ids.includes(foodId);
 
   const pressHandler = () => {
     console.log('Tıklandı!');
   };
+
+  function changeFavorite() {
+    if (foodIsFavorite) {
+      favoriteFoodContext.removeFavorite(foodId);
+    } else {
+      favoriteFoodContext.addFavorite(foodId);
+    }
+  }
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -30,12 +41,17 @@ export default function FoodDetailScreen({ route, navigation }) {
             onPress={pressHandler}
             style={({ pressed }) => (pressed ? styles.pressed : null)}
           >
-            <Ionicons name="ios-star-half" size={24} color="white" />
+            <Ionicons
+              name={foodIsFavorite ? 'star' : 'star-outline'}
+              size={24}
+              color="white"
+              onPress={changeFavorite}
+            />
           </Pressable>
         );
       },
     });
-  }, [navigation]);
+  }, [navigation, changeFavorite]);
 
   return (
     <ScrollView style={styles.rootContainer}>
